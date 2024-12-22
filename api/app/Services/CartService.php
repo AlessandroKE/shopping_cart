@@ -64,12 +64,36 @@ class CartService
             }
 
             $cart[] = [
-                'id' => $productId,
+                'product_id' => $productId,
                 'quantity' => (int)$quantity,
                 'name' => $product->name,
                 'price' => $product->price,
                 'image_url' => $product->image_url,
                 'slug' => $product->slug,
+            ];
+        }
+
+        return $cart;
+    }
+
+    public function getItems(): array
+    {
+        $cartKey = $this->getCartKey();
+        $cartItems = Redis::hgetall($cartKey);
+        $cart = [];
+
+        foreach ($cartItems as $productId => $quantity) {
+            $product = Product::find($productId);
+            
+            if (!$product) {
+                $this->removeItem($productId);
+                continue;
+            }
+
+            $cart[] = [
+                'product_id' => $productId,
+                'quantity' => (int)$quantity,
+                'price' => $product->price,
             ];
         }
 

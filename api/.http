@@ -1,0 +1,117 @@
+@BASE_URL=http://127.0.0.1:8000
+
+###
+GET {{BASE_URL}}/api/cart
+Accept: application/json
+Authorization: Bearer {{authToken}}
+
+###
+POST {{BASE_URL}}/api/register
+Content-Type: application/json
+Accept: application/json
+
+{
+    "name":"John Doe",
+    "email":"john@example.com",
+    "password":"password123",
+    "password_confirmation":"password123"
+}
+
+###
+# @name login
+POST {{BASE_URL}}/api/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email":"john@example.com",
+    "password":"password123"
+}
+
+###
+@authToken = {{login.response.body.token}}
+
+###
+POST {{BASE_URL}}/api/logout
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{authToken}}
+
+###
+POST {{BASE_URL}}/api/cart/add
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "product_id":3,
+    "quantity":2
+}
+
+###
+PUT {{BASE_URL}}/api/cart/update
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "product_id":1,
+    "quantity":4
+}
+
+###
+DELETE  {{BASE_URL}}/api/cart/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{authToken}}
+
+
+### Get all orders
+GET {{BASE_URL}}/api/orders
+Accept: application/json
+Authorization: Bearer {{authToken}}
+
+### Create order from cart
+POST {{BASE_URL}}/api/orders
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{authToken}}
+
+### Get specific order
+GET {{BASE_URL}}/api/orders/1
+Accept: application/json
+Authorization: Bearer {{authToken}}
+
+### Update order status
+PUT {{BASE_URL}}/api/orders/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "status": "processing"
+}
+
+### Cart Endpoints
+
+### Get cart items
+GET {{BASE_URL}}/api/cart
+Accept: application/json
+Authorization: Bearer {{authToken}}
+
+### Add item to cart
+POST {{BASE_URL}}/api/cart/add
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "product_id": 3,
+    "quantity": 2
+}
+
+### Remove item from cart
+DELETE {{BASE_URL}}/api/cart
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{authToken}}

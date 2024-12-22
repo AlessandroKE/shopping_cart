@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Services\CartService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
@@ -49,5 +51,11 @@ class CartController extends Controller
     {
         $this->cartService->removeItem($productId);
         return response()->json(['message' => 'Item removed from cart']);
+    }
+
+    public function destroy(): JsonResponse
+    {
+        $this->cartService->clearCart(Auth::user()->id);
+        return response()->json(['message' => 'Items removed from cart']);
     }
 }
