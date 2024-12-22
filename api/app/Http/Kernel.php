@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\UnescapedSlashesMiddleware;
 use Symfony\Component\HttpKernel\HttpKernel;
 
 class Kernel extends HttpKernel
@@ -11,4 +12,7 @@ class Kernel extends HttpKernel
             \Illuminate\Http\Middleware\HandleCors::class,
         ],
     ];
+    protected $middleware = [
+        UnescapedSlashesMiddleware::class,
+    ]; 
 }
