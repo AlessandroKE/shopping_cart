@@ -4,6 +4,7 @@ import { HttpClient } from "@/services/http.service"
 import { Product } from "@/types"
 import { useEffect, useState } from "react"
 
+
 // const products = [
 //   {
 //     name: "Wireless Earbuds, IPX8",
@@ -85,6 +86,8 @@ export function ProductGrid() {
   useEffect(()=>{
     fetchProducts()
   }, [])
+
+  
   return (
     <section className="py-12">
       <div className="container px-4 md:px-6">
