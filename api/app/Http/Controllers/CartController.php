@@ -19,7 +19,7 @@ class CartController extends Controller
     public function index()
     {
         return response()->json(
-            $this->cartService->getCart()
+            $this->cartService->getCart(), 200, [], JSON_UNESCAPED_SLASHES
         );
     }
 

@@ -67,7 +67,7 @@ class CartService
                 'product_id' => $productId,
                 'quantity' => (int)$quantity,
                 'name' => $product->name,
-                'price' => $product->price,
+                'price' => (float) $product->price,
                 'image_url' => $product->image_url,
                 'slug' => $product->slug,
             ];
