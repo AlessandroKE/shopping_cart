@@ -6,13 +6,17 @@ export class HttpClient<T= Record<string, never>> {
 
   constructor(baseUrl: string | null = null) {
     if (baseUrl) this.baseUrl = baseUrl
-    this.token = localStorage.getItem('token') ?? ''
+    if(typeof window !== 'undefined')
+      this.token = localStorage.getItem('token') ?? ''
   }
 
   private async handleResponse(response: Response, path: string) {
     if (response.status === 401 && !path.includes('/api/login')) {
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
+      if(typeof window !== 'undefined'){
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+      }
+      
       this.token = ''
       const currentPath = window.location.pathname.toLowerCase()
       if (!currentPath.includes('/signup') && !currentPath.includes('/signin')) {

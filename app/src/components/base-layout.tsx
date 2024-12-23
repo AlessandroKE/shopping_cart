@@ -4,7 +4,9 @@ import { CartProvider } from './cartProvider'
 import { ProductNavigationMenu } from './product-navigation'
 
 
-function BaseLayout({children}) {
+function BaseLayout({children}:Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <CartProvider>
         <ProductNavigationMenu />

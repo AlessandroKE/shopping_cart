@@ -1,30 +1,87 @@
-version: '3.8'
-
 services:
-  postgres:
-    image: postgres
-    container_name: postgres_container
-    environment:
-      POSTGRES_USER: sandro
-      POSTGRES_PASSWORD: Data@123
-      POSTGRES_DB: shopping_cart
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+  backend:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    working_dir: /var/www/html
     ports:
-      - "5432:5432"
+      - "8000:8000"
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: shopping_cart
+      DB_USERNAME: sandro
+      DB_PASSWORD: Data@123
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      APP_ENV: production
+    command: php artisan serve --host=0.0.0.0 --port=8000
+    networks:
+      - shopping_cart_network
+    depends_on:
+      - postgres
+      - redis
+
+  frontend:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: nextjs_app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - backend
     networks:
       - shopping_cart_network
 
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: sandro
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_PASSWORD: Data@123
+      POSTGRES_DB: shopping_cart
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sandro -d shopping_cart"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - shopping_cart_network
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
   redis:
-    image: redis
+    image: redis:latest
     container_name: redis_container
-    command: ["redis-server", "--appendonly", "yes"]
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
     volumes:
       - redis_data:/data
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - shopping_cart_network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
 networks:
   shopping_cart_network:
