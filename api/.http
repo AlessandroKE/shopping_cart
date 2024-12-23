@@ -38,7 +38,7 @@ Accept: application/json
 Authorization: Bearer {{authToken}}
 
 ###
-POST {{BASE_URL}}/api/cart/add
+POST {{BASE_URL}}/api/cart
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{authToken}}
@@ -49,7 +49,7 @@ Authorization: Bearer {{authToken}}
 }
 
 ###
-PUT {{BASE_URL}}/api/cart/update
+PUT {{BASE_URL}}/api/cart
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{authToken}}
