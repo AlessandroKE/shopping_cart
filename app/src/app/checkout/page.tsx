@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -8,17 +8,48 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Separator } from "@/components/ui/separator"
 import { CreditCard, Smartphone, DollarSign, CreditCardIcon } from 'lucide-react'
+import { CartService } from '@/services/cart.service'
+import { updateCart } from '@/store/cartSlice'
+import { RootState } from '@/store/store'
+import { useDispatch, useSelector } from 'react-redux'
+import { OrderService } from '@/services/order.service'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 export default function CheckoutPage() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('credit-card')
+  const dispatch = useDispatch()
+    const cartItems = useSelector((state: RootState) => state.cart.items)
+    const totalAmount = useSelector((state: RootState) => state.cart.totalAmount)
+    useEffect(() => {
+        fetchcart()
+    }, [])
 
+    const fetchcart = () =>{
+            const cartService = new CartService()
+            cartService.getCart().then(data => dispatch(updateCart(data)))
+        }
+
+    const addOrder = async () => {
+      try {
+        await new OrderService().addOrder()
+        toast.success("Order successful")
+        router.push('/orders')
+      } catch {
+        toast.error("An error occurred while placing order")
+      }
+    }
+    const router = useRouter()
+    useEffect(()=>{
+      if(cartItems.length === 0 )
+        router.push('/cart')
+    }, [cartItems])
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-4xl mx-auto p-4 md:p-6 lg:p-8">
         <h1 className="text-3xl font-bold mb-8">Checkout</h1>
         
         <div className="grid md:grid-cols-3 gap-8">
-          {/* Payment Methods */}
           <div className="md:col-span-2">
             <Card>
               <CardHeader>
@@ -104,7 +135,6 @@ export default function CheckoutPage() {
             </Card>
           </div>
 
-          {/* Order Summary */}
           <div className="md:col-span-1">
             <Card>
               <CardHeader>
@@ -113,22 +143,22 @@ export default function CheckoutPage() {
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>$90.00</span>
+                  <span>${totalAmount}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span>$8.00</span>
+                  <span>$0.00</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Tax</span>
-                  <span>$7.20</span>
+                  <span>$0.00</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between font-bold">
                   <span>Total</span>
-                  <span>$105.20</span>
+                  <span>${totalAmount}</span>
                 </div>
-                <Button className="w-full mt-4" size="lg">
+                <Button className="w-full mt-4" size="lg" onClick={addOrder}>
                   Place Order
                 </Button>
               </CardContent>
